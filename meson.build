@@ -28,10 +28,22 @@ includes += include_directories('third_party', is_system: true)
 files += [
   'src/engine.cc',
   'src/version.cc',
-  'src/utils/logging.cc'
+  'src/soko/bitboard.cc',
+  'src/soko/uciloop.cc',
+  'src/utils/commandline.cc',
+  'src/utils/configfile.cc',
+  'src/utils/logging.cc',
+  'src/utils/optionsdict.cc',
+  'src/utils/optionsparser.cc',
+  'src/utils/string.cc'
 ]
 
 includes += include_directories('src')
+
+files += 'src/utils/filesystem.posix.cc'
+deps += [
+     cc.find_library('pthread'),
+     ]
 
 executable('p0', 'src/main.cc',
                  files, include_directories: includes, dependencies: deps, install: true)
