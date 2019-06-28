@@ -1,0 +1,5 @@
+#define P0_VERSION_MAJOR 0
+#define P0_VERSION_MINOR 1 
+#define P0_VERSION_PATCH 0
+#define P0_VERSION_POSTFIX "dev"
+

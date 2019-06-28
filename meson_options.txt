@@ -1,0 +1,4 @@
+option('gtest',
+        type: 'boolean',
+        value: true,
+        description: 'Build gtest tests')

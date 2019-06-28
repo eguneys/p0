@@ -1,0 +1,44 @@
+project('p0', 'cpp',
+              default_options : ['cpp_std=c++14'],
+              meson_version: '>=0.45')
+
+cc = meson.get_compiler('cpp')
+
+if cc.get_id() == 'clang'
+  # Thread safety annotation
+  add_project_arguments('-Wthread-safety', language : 'cpp')
+endif
+if cc.get_id() == 'clang' or cc.get_id() == 'gcc'
+  add_project_arguments('-Wextra', language : 'cpp')
+  add_project_arguments('-pedantic', language : 'cpp')
+
+  if get_option('buildtype') == 'release'
+    add_project_arguments('-march=native', language : 'cpp')
+  endif
+endif
+
+
+deps = []
+files = []
+includes = []
+has_backends = false
+
+includes += include_directories('third_party', is_system: true)
+
+files += [
+  'src/engine.cc',
+  'src/version.cc',
+  'src/utils/logging.cc'
+]
+
+includes += include_directories('src')
+
+executable('p0', 'src/main.cc',
+                 files, include_directories: includes, dependencies: deps, install: true)
+
+if get_option('gtest')
+   gtest = dependency('gtest', fallback: ['gtest', 'gtest_dep'])
+
+   
+
+endif
