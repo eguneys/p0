@@ -2,9 +2,12 @@
 
 pushd "$(dirname "$0")"
 
+set -e
+
 case $1 in
     plain|debug|release)
         BUILDTYPE=$1
+        shift
         ;;
     *)
         BUILDTYPE=release

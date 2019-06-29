@@ -18,6 +18,8 @@ namespace pzero {
 
 
   void EngineController::PopulateOptions(OptionsParser* options) {
+    
+    NetworkFactory::PopulateOptions(options);
     options->Add<IntOption>(kThreadsOptionId, 1, 128) = kDefaultThreads;
 
     SearchParams::Populate(options);

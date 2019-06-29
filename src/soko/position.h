@@ -5,6 +5,8 @@
 
 namespace pzero {
   
-  
+  class PositionHistory {
+    
+  };
   
 } // namespace pzero

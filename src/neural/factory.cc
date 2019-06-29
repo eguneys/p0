@@ -30,7 +30,8 @@ namespace pzero {
   }
 
   void NetworkFactory::PopulateOptions(OptionsParser* options) {
-    
+    const auto backends = NetworkFactory::Get()->GetBackendsList();
+    options->Add<ChoiceOption>(NetworkFactory::kBackendId, backends) = backends.empty() ? "<none>" : backends[0];
   }
 
   void NetworkFactory::RegisterNetwork
@@ -38,6 +39,12 @@ namespace pzero {
    int priority) {
     factories_.emplace_back(name, factory, priority);
     std::sort(factories_.begin(), factories_.end());
+  }
+
+  std::vector<std::string> NetworkFactory::GetBackendsList() const {
+    std::vector<std::string> result;
+    for (const auto& x : factories_) result.emplace_back(x.name);
+    return result;
   }
 
   std::unique_ptr<Network> NetworkFactory::Create

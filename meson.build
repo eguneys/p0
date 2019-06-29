@@ -32,6 +32,8 @@ files += [
   'src/soko/board.cc',
   'src/soko/uciloop.cc',
   'src/mcts/params.cc',
+  'src/mcts/node.cc',
+  'src/mcts/search.cc',
   'src/neural/factory.cc',
   'src/utils/commandline.cc',
   'src/utils/configfile.cc',

@@ -24,6 +24,8 @@ namespace pzero {
 
     static void PopulateOptions(OptionsParser* options);
 
+    std::vector<std::string> GetBackendsList() const;
+
     std::unique_ptr<Network> Create
       (const std::string& network,
        /* const WeightsFile&, */
