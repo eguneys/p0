@@ -12,7 +12,8 @@ namespace pzero {
 
     static void Populate(OptionsParser* options);
 
-
+  private:
+    const OptionsDict& options_;
     
   };
   

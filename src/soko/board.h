@@ -10,7 +10,7 @@ namespace pzero {
     SokoBoard() = default;
     SokoBoard(const std::string& fen) { SetFromFen(fen); }
 
-    static const char* kStartPosFen;
+    static const char* kStartposFen;
 
     void SetFromFen(const std::string& fen, int* moves = nullptr);
   };

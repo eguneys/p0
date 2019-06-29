@@ -64,7 +64,7 @@ namespace pzero {
     if (current_position_) {
       SetupPosition(current_position_->fen, current_position_->moves);
     } else if (!tree_) {
-      SetupPosition(SokoBoard::kStartPosFen, {});
+      SetupPosition(SokoBoard::kStartposFen, {});
     }
 
     auto limits = PopulateSearchLimits(params, start_time);
