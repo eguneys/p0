@@ -47,7 +47,7 @@ namespace pzero {
     struct Factory {
       Factory(const std::string& name,
               FactoryFunc factory,
-              int priority) {}
+              int priority): name(name), factory(factory), priority(priority) {}
 
       bool operator<(const Factory& other) const {
         if (priority != other.priority) 
@@ -64,18 +64,18 @@ namespace pzero {
     friend class Register;
   };
 
-#define REGISTER_NETWORK_WITH_COUNTER2(name, func, priority, counter) \
-  namespace { \
-    static NetworkFactory::Register regH38fs##counter \
-      (name, \
-      [](const WeightsFile& w, const OptionsDict& o) { return func(w, o); }, \
-       priority); \
+#define REGISTER_NETWORK_WITH_COUNTER2(name, func, priority, counter)   \
+  namespace {                                                           \
+    static NetworkFactory::Register regH38fs##counter                   \
+      (name,                                                            \
+       [](/* const WeightsFile& w, */ const OptionsDict& o) { return func(/* w, */ o); }, \
+       priority);                                                       \
   }
 
-#define REGISTER_NETWORK_WITH_COUNTER(name, func, priority, counter) \
+#define REGISTER_NETWORK_WITH_COUNTER(name, func, priority, counter)    \
   REGISTER_NETWORK_WITH_COUNTER2(name, func, priority, counter)
 
-#define REGISTER_NETWORK(name, func, priority) \
+#define REGISTER_NETWORK(name, func, priority)                  \
   REGISTER_NETWORK_WITH_COUNTER(name, func, priority, __LINE__)
   
 } // namespace pzero

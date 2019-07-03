@@ -35,6 +35,7 @@ files += [
   'src/mcts/node.cc',
   'src/mcts/search.cc',
   'src/neural/factory.cc',
+  'src/neural/network_random.cc',
   'src/utils/commandline.cc',
   'src/utils/configfile.cc',
   'src/utils/logging.cc',
