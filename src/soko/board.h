@@ -16,7 +16,7 @@ namespace pzero {
 
     void Clear();
 
-    bool ApplyMove(Move move);
+    void ApplyMove(Move move);
 
     MoveList GenerateLegalMoves() const;
 
@@ -28,6 +28,8 @@ namespace pzero {
     }
 
     bool operator!=(const SokoBoard& other) const { return !operator==(other); }
+
+    std::string DebugString() const;
 
   private:
     BitBoard walls_;
