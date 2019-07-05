@@ -12,8 +12,11 @@ namespace pzero {
 
   } // namespace
 
-  EngineController::EngineController(const OptionsDict& options)
+  EngineController::EngineController
+  (BestMoveInfo::Callback best_move_callback,
+   const OptionsDict& options)
     :options_(options),
+     best_move_callback_(best_move_callback),
      move_start_time_(std::chrono::steady_clock::now()) {}
 
 
@@ -30,6 +33,8 @@ namespace pzero {
     SearchLimits limits;
 
     const int64_t time = params.movetime;
+
+    CERR << time;
 
     limits.search_deadline =
       start_time +
@@ -57,11 +62,15 @@ namespace pzero {
     std::vector<Move> moves;
 
     for (const auto& move : moves_str) moves.emplace_back(move);
+    tree_->ResetToPosition(fen, moves);
   }
 
   void EngineController::Go(const GoParams& params) {
-    const auto start_time = move_start_time_;
+    // const auto start_time = move_start_time_;
+    const auto start_time = std::chrono::steady_clock::now();
     go_params_ = params;
+
+    BestMoveInfo::Callback best_move_callback(best_move_callback_);
 
     if (current_position_) {
       SetupPosition(current_position_->fen, current_position_->moves);
@@ -72,13 +81,15 @@ namespace pzero {
     auto limits = PopulateSearchLimits(params, start_time);
 
     search_ = std::make_unique<Search>(*tree_, network_.get(),
+                                       best_move_callback,
                                        limits, options_);
 
     search_->StartThreads(options_.Get<int>(kThreadsOptionId.GetId()));
   }
 
   EngineLoop::EngineLoop() :
-    engine_(options_.GetOptionsDict()) {
+    engine_(std::bind(&UciLoop::SendBestMove, this, std::placeholders::_1),
+            options_.GetOptionsDict()) {
     engine_.PopulateOptions(&options_);
   }
 
@@ -88,6 +99,7 @@ namespace pzero {
 
   void EngineLoop::CmdPosition(const int level,
                                const std::vector<std::string>& moves) {
+
   }
 
   void EngineLoop::CmdGo(const GoParams& params) {

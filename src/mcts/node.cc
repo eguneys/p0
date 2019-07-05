@@ -1,5 +1,6 @@
 #include "mcts/node.h"
 
+#include <cassert>
 #include <thread>
 #include "neural/encoder.h"
 #include "neural/network.h"
@@ -64,11 +65,85 @@ namespace pzero {
     NodeGarbageCollector gNodeGc;
   }  // namespace
   
+  ////////////
+  // NodeTree
+  ///////////
+
+  void NodeTree::MakeMove(Move move) {
+    Node* new_head = nullptr;
+    for (auto& n : current_head_->Edges()) {
+      if (n.GetMove() == move) {
+        new_head = n.GetOrSpawnNode(current_head_);
+        break;
+      }
+    }
+    current_head_ = new_head ? new_head : current_head_->CreateSingleChildNode(move);
+    history_.Append(move);
+  }
+
+  bool NodeTree::ResetToPosition(const std::string& starting_fen,
+                                 const std::vector<Move>& moves) {
+
+    SokoBoard starting_board;
+    starting_board.SetFromFen(starting_fen);
+
+    DeallocateTree();
+
+    if (!gamebegin_node_) {
+      gamebegin_node_ = std::make_unique<Node>(nullptr, 0);
+    }
+
+    history_.Reset(starting_board);
+
+    Node* old_head = current_head_;
+    current_head_ = gamebegin_node_.get();
+    for (const auto& move : moves) {
+      MakeMove(move);
+    }
+
+    return true;
+  }
+
+
   void NodeTree::DeallocateTree() {
     gNodeGc.AddToGcQueue(std::move(gamebegin_node_));
 
     gamebegin_node_ = nullptr;
     current_head_ = nullptr;
+  }
+
+  ////////////
+  // EdgeList
+  ///////////
+
+  EdgeList::EdgeList(MoveList moves)
+    : edges_(std::make_unique<Edge[]>(moves.size())), size_(moves.size()) {
+        auto* edge= edges_.get();
+        for (const auto move: moves) edge++->SetMove(move);
+  }
+
+
+  ////////
+  // Node
+  ///////
+
+  Node* Node::CreateSingleChildNode(Move move) {
+    assert(!edges_);
+    assert(!child_);
+    edges_ = EdgeList({move});
+    child_ = std::make_unique<Node>(this, 0);
+    return child_.get();
+  }
+
+
+  Node::Iterator Node::Edges() { return {edges_, &child_}; }
+
+  ///////
+  // Edge
+  ///////
+
+  Move Edge::GetMove() const {
+    return move_;
   }
   
 } // namespace pzero

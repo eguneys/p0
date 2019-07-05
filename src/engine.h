@@ -17,7 +17,8 @@ namespace pzero {
 
   class EngineController {
   public:
-    EngineController(const OptionsDict& options);
+    EngineController(BestMoveInfo::Callback best_move_callback,
+                     const OptionsDict& options);
 
     ~EngineController() {
       search_.reset();
@@ -41,6 +42,8 @@ namespace pzero {
 
     const OptionsDict& options_;
 
+    BestMoveInfo::Callback best_move_callback_;
+    
     RpSharedMutex busy_mutex_;
     using SharedLock = std::shared_lock<RpSharedMutex>;
 

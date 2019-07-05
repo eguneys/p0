@@ -121,5 +121,11 @@ namespace pzero {
       std::cout << response << std::endl;
     }
   }
+
+  void UciLoop::SendBestMove(const BestMoveInfo& move) {
+    std::string res = "bestmove " + move.bestmove.as_string();
+
+    SendResponse(res);
+  }
   
 } // namespace pzero

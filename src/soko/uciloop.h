@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "soko/callbacks.h"
 #include "utils/exception.h"
 
 
@@ -22,6 +23,8 @@ namespace pzero {
 
     virtual void SendResponses(const std::vector<std::string>& responses);
     
+    void SendBestMove(const BestMoveInfo& move);
+
     virtual void CmdPosition(const int,
                              const std::vector<std::string>&) {
       throw Exception("Not supported");

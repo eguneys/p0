@@ -17,6 +17,7 @@ namespace pzero {
   class Search {
   public:
     Search(const NodeTree& tree, Network* network,
+           BestMoveInfo::Callback best_move_callback,
            const SearchLimits& limits,
            const OptionsDict& options);
 
@@ -34,6 +35,14 @@ namespace pzero {
 
     bool IsSearchActive() const;
   private:
+    void EnsureBestMoveKnown();
+
+    EdgeAndNode GetBestChildNoTemperature(Node* parent) const;
+    std::vector<EdgeAndNode> GetBestChildrenNoTemperature(Node* parent, int count) const;
+
+    int64_t GetTimeToDeadline() const;
+    void MaybeTriggerStop();
+    
     void FireStopInternal();
     
     void WatchdogThread();
@@ -43,6 +52,8 @@ namespace pzero {
     std::atomic<bool> stop_{false};
 
     bool bestmove_is_sent_ GUARDED_BY(counters_mutex_) = false;
+
+    EdgeAndNode final_bestmove_ GUARDED_BY(counters_mutex_);
 
     Mutex threads_mutex_;
     std::vector<std::thread> threads_ GUARDED_BY(threads_mutex_);
@@ -55,8 +66,9 @@ namespace pzero {
     const SearchLimits limits_;
     const std::chrono::steady_clock::time_point start_time_;
 
-    mutable SharedMutex nodes_mutex;
+    mutable SharedMutex nodes_mutex_;
 
+    BestMoveInfo::Callback best_move_callback_;
     const SearchParams params_;
     
     friend class SearchWorker;

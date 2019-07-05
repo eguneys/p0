@@ -30,6 +30,7 @@ files += [
   'src/version.cc',
   'src/soko/bitboard.cc',
   'src/soko/board.cc',
+  'src/soko/position.cc',
   'src/soko/uciloop.cc',
   'src/mcts/params.cc',
   'src/mcts/node.cc',
