@@ -14,5 +14,14 @@ namespace pzero {
 
     using Callback = std::function<void(const BestMoveInfo&)>;
   };
+
+  struct TournamentInfo {
+    bool finished = false;
+
+    // [win/lose]
+    int results[2] = { 0, 0 };
+
+    using Callback = std::function<void(const TournamentInfo&)>;
+  };
   
 } // namespace pzero
