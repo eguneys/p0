@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "utils/bitset_iter.h"
+
 namespace pzero {
 
   class BoardSquare {
@@ -35,7 +37,6 @@ namespace pzero {
     BitBoard() = default;
     BitBoard(const BitBoard&) = default;
 
-    unsigned long as_ulong() const { return board_.to_ulong(); }
     void clear() { board_ = 0; }
 
     void set(BoardSquare square) { set(square.as_int()); }
@@ -54,7 +55,7 @@ namespace pzero {
 
     bool empty() const { return board_.count() == 0; }
 
-    bool intersects(const BitBoard& other) const { return board_.to_ulong() & other.board_.to_ulong(); }
+    bool intersects(const BitBoard& other) const { return board_.to_string() == other.board_.to_string(); }
 
     bool operator==(const BitBoard& other) const {
       return board_.to_string() == other.board_.to_string();

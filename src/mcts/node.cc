@@ -64,6 +64,23 @@ namespace pzero {
 
     NodeGarbageCollector gNodeGc;
   }  // namespace
+
+  ////////
+  // Edge
+  ///////
+
+  Move Edge::GetMove() const {
+    return move_;
+  }
+
+  void Edge::SetP(float p) {
+    assert(0.0f <= p && p <= 1.0f);
+    p_ = p;
+  }
+
+  float Edge::GetP() const {
+    return p_;
+  }
   
   ////////////
   // NodeTree
@@ -79,6 +96,13 @@ namespace pzero {
     }
     current_head_ = new_head ? new_head : current_head_->CreateSingleChildNode(move);
     history_.Append(move);
+  }
+
+  void NodeTree::TrimTreeAtHead() {
+    auto tmp = std::move(current_head_->sibling_);
+    gNodeGc.AddToGcQueue(std::move(current_head_->child_));
+    *current_head_ = Node(current_head_->GetParent(), current_head_->index_);
+    current_head_->sibling_ = std::move(tmp);    
   }
 
   bool NodeTree::ResetToPosition(const std::string& starting_fen,
@@ -138,12 +162,37 @@ namespace pzero {
 
   Node::Iterator Node::Edges() { return {edges_, &child_}; }
 
-  ///////
-  // Edge
-  ///////
+  Edge* Node::GetEdgeToNode(const Node* node) const {
+    assert(node->parent_ == this);
+    assert(node->index_ < edges_.size());
+    return &edges_[node->index_];
+  }
 
-  Move Edge::GetMove() const {
-    return move_;
+
+  void Node::MakeTerminal(GameResult result) {
+    is_terminal_ = true;
+    if (result == GameResult::WIN) {
+      q_ = 1.0f;
+    } else if (result == GameResult::LOSE) {
+      q_ = -1.0f;
+    }
+  }
+
+  bool Node::TryStartScoreUpdate() {
+    if (n_ == 0 && n_in_flight_ > 0) return false;
+    ++n_in_flight_;
+    return true;
+  }
+
+  void Node::CancelScoreUpdate(int multivisit) {
+    n_in_flight_ -= multivisit;
+  }
+
+  void Node::FinalizeScoreUpdate(float v, int multivisit) {
+    q_ += multivisit * (v - q_) / (n_ + multivisit);
+
+    n_ += multivisit;
+    n_in_flight_ -= multivisit;
   }
   
 } // namespace pzero

@@ -85,8 +85,123 @@ namespace pzero {
     expected = {"right"};
     EXPECT_EQ(moves, expected);
     
-    std::cerr << board5.DebugString();
+    // std::cerr << board5.DebugString();
     
+  }
+
+  TEST(SokoBoard, IsEndBoard) {
+    SokoBoard board;
+    board.SetFromFen(SokoBoard::kStartposFen);
+
+
+
+  const char* EndPosFen =
+    "    #####\n"
+    "    #   #\n"
+    "    #   #\n"
+    "  ###   ##\n"
+    "  #      #\n"
+    "### # ## #   ######\n"
+    "#   # ## #####  **#\n"
+    "#             @$.*#\n"
+    "##### ### # ##  **#\n"
+    "    #     #########\n"
+    "    #######\n";
+
+    SokoBoard board2;
+    board2.SetFromFen(EndPosFen);
+
+    EXPECT_EQ(board.IsEnd(), false);
+    EXPECT_EQ(board2.IsEnd(), false);
+
+    SokoBoard board3 = board2;
+    PlayMoves(board3, "right");
+
+    EXPECT_EQ(board3.IsEnd(), true);
+  }
+
+  TEST(SokoBoard, IsStuckBoard) {
+
+    const char* EndPosFen =
+      "    #####\n"
+      "    #   #\n"
+      "    #$  #\n"
+      "  ###  $##\n"
+      "  #  $ $ #\n"
+      "### # ## #   ######\n"
+      "#   # ## #####  ..#\n"
+      "# $ $@          ..#\n"
+      "##### ### # ##  ..#\n"
+      "    #     #########\n"
+      "    #######\n";
+
+    SokoBoard board2;
+    board2.SetFromFen(EndPosFen);
+
+    EXPECT_EQ(board2.IsStuck(), false);
+
+    SokoBoard board3 = board2;
+    PlayMoves(board3, "left");
+
+    EXPECT_EQ(board3.IsStuck(), true);
+
+    const char* StuckPosFen2 =
+      "    #####\n"
+      "    #   #\n"
+      "    #$  #\n"
+      "  ###$ $##\n"
+      "  #   $ #\n"
+      "### # ## #   ######\n"
+      "#   #@## #####  ..#\n"
+      "# $ $           ..#\n"
+      "##### ### # ##  ..#\n"
+      "    #     #########\n"
+      "    #######\n";
+
+    SokoBoard board4;
+    board4.SetFromFen(StuckPosFen2);
+
+    EXPECT_EQ(board4.IsStuck(), true);
+  }
+
+  TEST(SokoBoard, IsStuckBoard2) {
+    const char* StuckPosFen =
+      "    #####\n"
+      "    #   #\n"
+      "    #$  #\n"
+      "  ###  $##\n"
+      "  #   $ #\n"
+      "### # ## #   ######\n"
+      "#   #@## #####  ..#\n"
+      "#$              ..#\n"
+      "##### ### # ##  ..#\n"
+      "    #     #########\n"
+      "    #######\n";
+
+
+    SokoBoard board;
+    board.SetFromFen(StuckPosFen);
+
+    EXPECT_EQ(board.IsStuck(), true);
+
+    const char* StuckPosFen2 =
+      "    #####\n"
+      "    #$  #\n"
+      "    #   #\n"
+      "  ###  $##\n"
+      "  #   $ #\n"
+      "### # ## #   ######\n"
+      "#   #@## #####  ..#\n"
+      "#               ..#\n"
+      "##### ### # ##  ..#\n"
+      "    #     #########\n"
+      "    #######\n";
+
+
+    SokoBoard board2;
+    board2.SetFromFen(StuckPosFen2);
+
+    EXPECT_EQ(board2.IsStuck(), true);
   }
   
   

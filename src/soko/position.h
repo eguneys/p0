@@ -41,6 +41,8 @@ namespace pzero {
 
     void Append(Move m);
 
+    GameResult ComputeGameResult() const;
+
   private:
     int ComputeLastMoveRepetitions() const;
 

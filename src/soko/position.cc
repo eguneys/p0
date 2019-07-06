@@ -13,7 +13,16 @@ namespace pzero {
     board_ = board;
   }
 
-  
+
+  GameResult PositionHistory::ComputeGameResult() const {
+    const auto& board = Last().GetBoard();
+
+    if (board.IsEnd()) return GameResult::WIN;
+    if (Last().GetRepetitions() >= 2) return GameResult::LOSE;
+    if (board.IsStuck()) return GameResult::LOSE;
+
+    return GameResult::UNDECIDED;
+  }  
 
   void PositionHistory::Reset(const SokoBoard& board) {
     positions_.clear();

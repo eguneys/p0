@@ -25,7 +25,7 @@ namespace pzero {
 
     void StartThreads(size_t how_many);
 
-    
+    void RunBlocking(size_t threads);
     
     void Stop();
     
@@ -34,6 +34,10 @@ namespace pzero {
     void Wait();
 
     bool IsSearchActive() const;
+
+    Move GetBestMove();
+
+    float GetBestEval() const;
   private:
     void EnsureBestMoveKnown();
 

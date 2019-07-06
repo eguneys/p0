@@ -15,6 +15,7 @@ namespace pzero {
     void RunLoop() override;
 
   private:
+    void SendGameInfo(const GameInfo& info);
     void SendTournament(const TournamentInfo& info);
     
     OptionsParser options_;

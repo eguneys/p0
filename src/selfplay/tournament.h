@@ -12,6 +12,7 @@ namespace pzero {
   public:
     SelfPlayTournament(const OptionsDict& options,
                        BestMoveInfo::Callback best_move_info,
+                       GameInfo::Callback game_info,
                        TournamentInfo::Callback tournament_info);
 
     static void PopulateOptions(OptionsParser* options);
@@ -47,7 +48,11 @@ namespace pzero {
 
     std::shared_ptr<Network> network_;
 
+    const OptionsDict player_options_;
+    SelfPlayLimits search_limits_;
+
     BestMoveInfo::Callback best_move_callback_;
+    GameInfo::Callback game_callback_;
     TournamentInfo::Callback tournament_callback_;
     const int kThreads;
     const int kTotalGames;

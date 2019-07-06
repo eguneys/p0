@@ -15,6 +15,18 @@ namespace pzero {
     using Callback = std::function<void(const BestMoveInfo&)>;
   };
 
+  struct GameInfo {
+    GameResult game_result = GameResult::UNDECIDED;
+
+    std::string training_filename;
+    
+    std::vector<Move> moves;
+
+    int game_id = -1;
+
+    using Callback = std::function<void(const GameInfo&)>;
+  };
+
   struct TournamentInfo {
     bool finished = false;
 

@@ -18,6 +18,9 @@ namespace pzero {
 
     void ApplyMove(Move move);
 
+    bool IsEnd() const;
+    bool IsStuck() const;
+
     MoveList GenerateLegalMoves() const;
 
     bool operator==(const SokoBoard& other) const {

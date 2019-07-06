@@ -28,6 +28,45 @@ namespace pzero {
   }
 
   namespace {
+
+    static const Move::Direction kDirections[4] = {
+      Move::Direction::Up,
+      Move::Direction::Down,
+      Move::Direction::Left,
+      Move::Direction::Right 
+    };
+
+
+    static const std::pair<Move::Direction, Move::Direction> kStuckChecks[] =
+      {
+        {Move::Direction::Up,
+         Move::Direction::Left},
+        {Move::Direction::Up,
+         Move::Direction::Right},
+        {Move::Direction::Down,
+         Move::Direction::Left},
+        {Move::Direction::Down,
+         Move::Direction::Right}
+      };
+
+    static const std::map<Move::Direction, std::pair<Move::Direction, Move::Direction>> kStuckChecks2 = {
+      {Move::Direction::Up, {
+          Move::Direction::Left,
+          Move::Direction::Right
+        }},
+      {Move::Direction::Down, {
+          Move::Direction::Left,
+          Move::Direction::Right
+        }},
+      {Move::Direction::Left, {
+          Move::Direction::Up,
+          Move::Direction::Down
+        }},
+      {Move::Direction::Right, {
+          Move::Direction::Up,
+          Move::Direction::Down
+        }}
+    };
     
     static const std::map<Move::Direction, std::pair<int, int>> kCharMoves = {
       {Move::Direction::Up, {1, 0}},
@@ -67,6 +106,52 @@ namespace pzero {
       boxes_.set(to2);
     }
     char_ = to;
+  }
+
+  bool SokoBoard::IsEnd() const {
+    return boxes_.intersects(targets_);
+  }
+
+  bool SokoBoard::IsStuck() const {
+
+    for (unsigned square = 0; square < 400; square++) {
+      const BoardSquare b_sq(square);
+
+      if (boxes_.get(b_sq)) {
+        for (auto check : kStuckChecks) {
+          BoardSquare c1;
+          BoardSquare c2;
+          AddDirection(b_sq, c1, check.first);
+          AddDirection(b_sq, c2, check.second);
+          if (walls_.get(c1) && walls_.get(c2)) {
+            return true;
+          }
+        }
+
+        for (auto check2 : kStuckChecks2) {
+          BoardSquare b2;
+          AddDirection(b_sq, b2, check2.first);
+          if (boxes_.get(b2)) {
+            BoardSquare c1;
+            BoardSquare c2;
+            BoardSquare c3;
+            BoardSquare c4;
+            AddDirection(b_sq, c1, check2.second.first);
+            AddDirection(b2, c2, check2.second.first);
+
+            AddDirection(b_sq, c3, check2.second.second);
+            AddDirection(b2, c4, check2.second.second);
+
+            if ((walls_.get(c1) && walls_.get(c2)) ||
+                (walls_.get(c3) && walls_.get(c4))) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   MoveList SokoBoard::GenerateLegalMoves() const {

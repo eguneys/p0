@@ -30,6 +30,11 @@ namespace pzero {
     }
   }
 
+  void Search::RunBlocking(size_t threads) {
+    StartThreads(threads);
+    Wait();
+  }
+
   bool Search::IsSearchActive() const {
     return !stop_.load(std::memory_order_acquire);
   }
@@ -37,6 +42,22 @@ namespace pzero {
   int64_t Search::GetTimeToDeadline() const {
     return std::chrono::duration_cast<std::chrono::milliseconds>
       (limits_.search_deadline - std::chrono::steady_clock::now()).count();
+  }
+
+  float Search::GetBestEval() const {
+    SharedMutex::SharedLock lock(nodes_mutex_);
+    Mutex::Lock counters_lock(counters_mutex_);
+    float parent_q = -root_node_->GetQ();
+    if (!root_node_->HasChildren()) return parent_q;
+    EdgeAndNode best_edge = GetBestChildNoTemperature(root_node_);
+    return best_edge.GetQ(parent_q);
+  }
+
+  Move Search::GetBestMove() {
+    SharedMutex::Lock lock(nodes_mutex_);
+    Mutex::Lock counters_lock(counters_mutex_);
+    EnsureBestMoveKnown();
+    return final_bestmove_.GetMove();
   }
 
   void Search::EnsureBestMoveKnown() REQUIRES(nodes_mutex_)

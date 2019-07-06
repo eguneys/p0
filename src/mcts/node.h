@@ -14,10 +14,15 @@ namespace pzero {
   public:
     Move GetMove() const;
 
+    float GetP() const;
+    void SetP(float val);
+
   private:
     void SetMove(Move move) { move_ = move; }
 
     Move move_;
+
+    uint16_t p_ = 0;
     
     friend class EdgeList;
   };
@@ -54,9 +59,28 @@ namespace pzero {
 
     bool HasChildren() const { return edges_; }
 
+    uint32_t GetN() const { return n_; }
+    uint32_t GetNInFlight() const { return n_in_flight_; }
+
+    int GetNStarted() const { return n_ + n_in_flight_; }
+
+    float GetQ() const { return q_; }
+
     bool IsTerminal() const { return is_terminal_; }
 
+    void MakeTerminal(GameResult result);
+
+    bool TryStartScoreUpdate();
+
+    void CancelScoreUpdate(int multivisit);
+
+    void FinalizeScoreUpdate(float v, int multivisit);
+
+    void IncrementNInFlight(int multivisit) { n_in_flight_ += multivisit; }
+
     Iterator Edges();
+
+    Edge* GetEdgeToNode(const Node* node) const;
 
   private:
 
@@ -106,8 +130,23 @@ namespace pzero {
     Node* node() const { return node_; }
 
 
+    float GetQ(float default_q) const {
+      return (node_ && node_->GetN() > 0) ? node_->GetQ() : default_q;
+    }
+
+    uint32_t GetN() const { return node_ ? node_->GetN() : 0; }
+    int GetNStarted() const { return node_ ? node_->GetNStarted() : 0; }
+
+    bool IsTerminal() const { return node_ ? node_->IsTerminal(): false; }
+
+
+    float GetP() const { return edge_->GetP(); }
     Move GetMove() const {
       return edge_ ? edge_->GetMove() : Move();
+    }
+
+    float GetU(float numerator) const {
+      return numerator * GetP() / (1 + GetNStarted());
     }
 
   protected:
@@ -185,10 +224,13 @@ namespace pzero {
 
     void MakeMove(Move move);
 
+    void TrimTreeAtHead();
+
     bool ResetToPosition(const std::string& starting_fen,
                          const std::vector<Move>& moves);
 
     Node* GetCurrentHead() const { return current_head_; }
+    Node* GetGameBeginNode() const { return gamebegin_node_.get(); }
     const PositionHistory& GetPositionHistory() const { return history_; }
 
   private:
