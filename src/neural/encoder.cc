@@ -6,7 +6,7 @@ namespace pzero {
 
   namespace {
     const int kMoveHistory = 8;
-    const int kPlanesPerBoard = 13;
+    const int kPlanesPerBoard = 32;
     const int kAuxPlaneBase = kPlanesPerBoard * kMoveHistory;
   } // namespace
 
@@ -33,15 +33,23 @@ namespace pzero {
       const int base = i * kPlanesPerBoard;
 
       std::uint64_t walls[10];
+      std::uint64_t targets[10];
+      std::uint64_t boxes[10];
+
 
       board.walls().as_int_array(walls);
+      board.targets().as_int_array(targets);
+      board.boxes().as_int_array(boxes);
 
       for (int i = 0; i < 10; i++) {
         result[base + 0 * 10 + i].mask = walls[i];
+        result[base + 1 * 10 + i].mask = targets[i];
+        result[base + 2 * 10 + i].mask = boxes[i];
       }
+      result[base + 3 * 10].mask = board.king().as_int();
 
       const int repetitions = position.GetRepetitions();
-      if (repetitions >= 1) result[base + 12].SetAll();
+      if (repetitions >= 1) result[base + 3 * 10 + 1].SetAll();
 
     }
     

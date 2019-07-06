@@ -63,12 +63,26 @@ namespace pzero {
 
     for (int i = 0; i < 10; i++) {
       InputPlane walls_plane = encoded_planes[0 * 10 + i];
+      InputPlane targets_plane = encoded_planes[1 * 10 + i];
+      InputPlane boxes_plane = encoded_planes[2 * 10 + i];
     
       auto walls_mask = MakeMask(fen, i, '#');
+      auto targets_mask = MakeMask(fen, i, '.');
+      auto boxes_mask = MakeMask(fen, i, '$');
 
       EXPECT_EQ(walls_plane.mask, walls_mask);
       EXPECT_EQ(walls_plane.value, 1.0f);
+
+      EXPECT_EQ(targets_plane.mask, targets_mask);
+      EXPECT_EQ(targets_plane.value, 1.0f);
+
+      EXPECT_EQ(boxes_plane.mask, boxes_mask);
+      EXPECT_EQ(boxes_plane.value, 1.0f);
     }
+
+    InputPlane king_plane = encoded_planes[3 * 10];
+    
+    EXPECT_EQ(king_plane.mask, (20 * 11 + 11));
     
   }
   
