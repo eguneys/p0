@@ -32,10 +32,13 @@ namespace pzero {
 
       const int base = i * kPlanesPerBoard;
 
-      // result[base + 0].mask = board.walls().as_int();
-      // result[base + 1].mask = board.targets().as_int();
-      // result[base + 2].mask = board.boxes().as_int();
-      // result[base + 3].mask = board.king().as_int();
+      std::uint64_t walls[10];
+
+      board.walls().as_int_array(walls);
+
+      for (int i = 0; i < 10; i++) {
+        result[base + 0 * 10 + i].mask = walls[i];
+      }
 
       const int repetitions = position.GetRepetitions();
       if (repetitions >= 1) result[base + 12].SetAll();

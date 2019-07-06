@@ -67,4 +67,8 @@ if get_option('gtest')
       executable('sokoboard_test', 'src/soko/board_test.cc',
       include_directories: includes, link_with: p0_lib, dependencies: gtest), args: '--gtest_output=xml:sokoboard.xml', timeout: 90)
 
+   test('EncodePositionForNN',
+      executable('encoder_test', 'src/neural/encoder_test.cc',
+      include_directories: includes, link_with: p0_lib, dependencies: gtest), args: '--gtest_output=xml:encoder.xml', timeout: 90)
+
 endif

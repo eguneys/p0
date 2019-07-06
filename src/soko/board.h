@@ -34,6 +34,11 @@ namespace pzero {
 
     std::string DebugString() const;
 
+    BitBoard walls() const { return walls_; }
+    BitBoard targets() const { return targets_; }
+    BitBoard boxes() const { return boxes_; }
+    BoardSquare king() const { return char_; }
+
   private:
     BitBoard walls_;
     BitBoard targets_;

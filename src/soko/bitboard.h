@@ -37,6 +37,18 @@ namespace pzero {
     BitBoard() = default;
     BitBoard(const BitBoard&) = default;
 
+    void as_int_array(std::uint64_t arr[]) const {
+      
+      for (int i = 0; i < 10; i++) {
+        uint64_t value = 0;
+        for (int j = 0; j < 40; j++) {
+          if (get(i * 40 + j))
+            value |=  1ull << j;
+        }
+        arr[i] = value;
+      }
+    }
+
     void clear() { board_ = 0; }
 
     void set(BoardSquare square) { set(square.as_int()); }
