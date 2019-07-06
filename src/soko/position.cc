@@ -37,7 +37,7 @@ namespace pzero {
   int PositionHistory::ComputeLastMoveRepetitions() const {
     const auto& last = positions_.back();
 
-    for (int idx = positions_.size() - 1; idx >= 0; idx -= 1) {
+    for (int idx = positions_.size() - 2; idx >= 0; idx -= 1) {
       const auto& pos = positions_[idx];
       if (pos.GetBoard() == last.GetBoard()) {
         return 1 + pos.GetRepetitions();

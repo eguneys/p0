@@ -55,18 +55,23 @@ namespace pzero {
 
     Node* CreateSingleChildNode(Move m);
 
+    void CreateEdges(const MoveList& moves);
+
     Node* GetParent() const { return parent_; }
 
     bool HasChildren() const { return edges_; }
 
     uint32_t GetN() const { return n_; }
     uint32_t GetNInFlight() const { return n_in_flight_; }
+    uint32_t GetChildrenVisits() const { return n_ > 0 ? n_ - 1 : 0; }
 
     int GetNStarted() const { return n_ + n_in_flight_; }
 
     float GetQ() const { return q_; }
 
     bool IsTerminal() const { return is_terminal_; }
+
+    uint16_t GetNumEdges() const { return edges_.size(); }
 
     void MakeTerminal(GameResult result);
 
@@ -114,6 +119,8 @@ namespace pzero {
   EdgeAndNode(Edge* edge, Node* node)
     : edge_(edge), node_(node) {}
 
+    void Reset() { edge_ = nullptr; }
+
     bool operator==(const EdgeAndNode& other) const {
       return edge_ == other.edge_;
     }
@@ -135,6 +142,7 @@ namespace pzero {
     }
 
     uint32_t GetN() const { return node_ ? node_->GetN() : 0; }
+
     int GetNStarted() const { return node_ ? node_->GetNStarted() : 0; }
 
     bool IsTerminal() const { return node_ ? node_->IsTerminal(): false; }

@@ -13,6 +13,7 @@ namespace pzero {
       for (size_t i = 0; i < 4; ++i) {
         res[kIdxToMove[i].as_packed_int()] = i;
       }
+      return res;
     }
 
     const std::vector<unsigned short> kMoveToIdx = BuildMoveIndices();

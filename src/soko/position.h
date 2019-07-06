@@ -33,9 +33,13 @@ namespace pzero {
 
     const Position& Last() const { return positions_.back(); }
 
+    const Position& GetPositionAt(int idx) const { return positions_[idx]; }
+
     void Trim(int size) {
       positions_.erase(positions_.begin() + size, positions_.end());
     }
+
+    int GetLength() const { return positions_.size(); }
 
     void Reset(const SokoBoard& board);
 

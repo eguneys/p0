@@ -36,6 +36,7 @@ files += [
   'src/mcts/node.cc',
   'src/mcts/search.cc',
   'src/neural/factory.cc',
+  'src/neural/encoder.cc',
   'src/neural/network_random.cc',
   'src/selfplay/game.cc',
   'src/selfplay/loop.cc',

@@ -159,6 +159,12 @@ namespace pzero {
     return child_.get();
   }
 
+  void Node::CreateEdges(const MoveList& moves) {
+    assert(!edges_);
+    assert(!child_);
+    edges_ = EdgeList(moves);
+  }
+
 
   Node::Iterator Node::Edges() { return {edges_, &child_}; }
 

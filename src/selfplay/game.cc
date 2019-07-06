@@ -13,6 +13,8 @@ namespace pzero {
     while (!abort_) {
       game_result_ = tree_->GetPositionHistory().ComputeGameResult();
 
+      CERR << tree_->GetPositionHistory().Last().GetBoard().DebugString();
+
       if (game_result_ != GameResult::UNDECIDED) break;
       
       tree_->TrimTreeAtHead();

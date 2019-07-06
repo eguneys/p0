@@ -94,34 +94,57 @@ namespace pzero {
 
     void ExecuteOneIteration();
 
+    void InitializeIteration(std::unique_ptr<NetworkComputation> computation);
+
+    void GatherMinibatch();
+
+    void RunNNComputation();
+
+    void FetchMinibatchResults();
+
+    void DoBackupUpdate();
+
   private:
     struct NodeToProcess {
       bool IsExtendable() const { return !is_collision && !node->IsTerminal(); }
       bool IsCollision() const { return is_collision; }
       
       Node* node;
+
+      float v;
+
+      int multivisit = 0;
       uint16_t depth;
       bool nn_queried = false;
       bool is_collision = false;
 
       static NodeToProcess Collision(Node* node, uint16_t depth) {
-        return NodeToProcess(node, depth, true);
+        return NodeToProcess(node, depth, true, 1);
       }
 
       static NodeToProcess Visit(Node* node, uint16_t depth) {
-        return NodeToProcess(node, depth, false);
+        return NodeToProcess(node, depth, false, 1);
       }
 
     private:
-      NodeToProcess(Node* node, uint16_t depth, bool is_collision)
+      NodeToProcess(Node* node, uint16_t depth, bool is_collision, int multivisit)
         : node(node),
-        depth(depth),
-        is_collision(is_collision) {}
+          multivisit(multivisit),
+          depth(depth),
+          is_collision(is_collision) {}
     };
+
+    NodeToProcess PickNodeToExtend();
+    void ExtendNode(Node* node);
+    void AddNodeToComputation(Node* node);
+    void FetchSingleNodeResult(NodeToProcess* node_to_process,
+                               int idx_in_computation);
+    void DoBackupUpdateSingleNode(const NodeToProcess& node_to_process);
     
     Search* const search_;
 
     std::vector<NodeToProcess> minibatch_;
+    std::unique_ptr<NetworkComputation> computation_;
     PositionHistory history_;
     const SearchParams& params_;
   };
