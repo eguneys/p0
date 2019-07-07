@@ -40,6 +40,12 @@ namespace pzero {
 
       auto best_eval = search_->GetBestEval();
       if (training) {
+        auto best_q = best_eval;
+        training_data_.push_back
+          (tree_->GetCurrentHead()->GetV4TrainingData
+           (GameResult::UNDECIDED,
+            tree_->GetPositionHistory(),
+            best_q));
       }
 
       if (best_eval == 1) {
@@ -74,4 +80,19 @@ namespace pzero {
     if (search_) search_->Abort();
   }
   
+
+  void SelfPlayGame::WriteTrainingData(TrainingDataWriter* writer) const {
+    assert(!training_data_.empty());
+
+    for (auto chunk : training_data_) {
+      if (game_result_ == GameResult::WIN) {
+        chunk.result = 1;
+      } else if (game_result_ == GameResult::LOSE) {
+        chunk.result = -1;
+      } else {
+        chunk.result = 0;
+      }
+      writer->WriteChunk(chunk);
+    }
+  }
 }

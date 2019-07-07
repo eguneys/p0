@@ -50,6 +50,7 @@ namespace pzero {
   class Node {
   public:
     using Iterator = Edge_Iterator<false>;
+    using ConstIterator = Edge_Iterator<true>;
 
   Node(Node* parent, uint16_t index) 
     : parent_(parent), index_(index) {}
@@ -84,6 +85,11 @@ namespace pzero {
 
     void IncrementNInFlight(int multivisit) { n_in_flight_ += multivisit; }
 
+    V4TrainingData GetV4TrainingData(GameResult result,
+                                     const PositionHistory& history,
+                                     float best_q) const;
+
+    ConstIterator Edges() const;
     Iterator Edges();
 
     Edge* GetEdgeToNode(const Node* node) const;

@@ -165,7 +165,7 @@ namespace pzero {
     edges_ = EdgeList(moves);
   }
 
-
+  Node::ConstIterator Node::Edges() const { return {edges_, &child_}; }
   Node::Iterator Node::Edges() { return {edges_, &child_}; }
 
   Edge* Node::GetEdgeToNode(const Node* node) const {
@@ -201,4 +201,44 @@ namespace pzero {
     n_in_flight_ -= multivisit;
   }
   
+  V4TrainingData Node::GetV4TrainingData
+  (GameResult game_result,
+   const PositionHistory& history,
+   float best_q) const {
+    V4TrainingData result;
+    
+    result.version = 4;
+
+    const float total_n = static_cast<float>(GetChildrenVisits());
+    if (total_n <= 0.0f) throw Exception("Search generated invalid data!");
+
+    std::fill(std::begin(result.probabilities), std::end(result.probabilities), -1);
+
+    for (const auto& child : Edges()) {
+      result.probabilities[child.edge()->GetMove().as_nn_index()] =
+        child.GetN() / total_n;
+    }
+
+    InputPlanes planes = EncodePositionForNN(history, 8);
+    int plane_idx = 0;
+    for (auto& plane : result.planes) {
+      plane = planes[plane_idx++].mask;
+    }
+
+    const auto& position = history.Last();
+
+    if (game_result == GameResult::WIN) {
+      result.result = 1;
+    } else if (game_result == GameResult::LOSE) {
+      result.result = -1;
+    } else {
+      result.result = 0;
+    }
+
+    result.root_q = -GetQ();
+    result.best_q = best_q;
+    
+    return result;
+  }
+
 } // namespace pzero

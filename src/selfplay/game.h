@@ -30,7 +30,7 @@ namespace pzero {
     
     void Abort();
 
-    // void WriteTrainingData(TrainingDataWriter* writer) const;
+    void WriteTrainingData(TrainingDataWriter* writer) const;
 
     GameResult GetGameResult() const { return game_result_; }
     std::vector<Move> GetMoves() const;
@@ -49,7 +49,7 @@ namespace pzero {
 
     std::mutex mutex_;
     
-    // std::vector<V4TrainingData> training_data_;
+    std::vector<V4TrainingData> training_data_;
   };
   
 } // namespace pzero
