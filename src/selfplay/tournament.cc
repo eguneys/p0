@@ -86,6 +86,14 @@ namespace pzero {
       game_info.game_result = game.GetGameResult();
       game_info.game_id = game_number;
       game_info.moves = game.GetMoves();
+
+      if (kTraining) {
+        TrainingDataWriter writer(game_number);
+        game.WriteTrainingData(&writer);
+        writer.Finalize();
+        game_info.training_filename = writer.GetFileName();
+      }
+
       game_callback_(game_info);
 
       {

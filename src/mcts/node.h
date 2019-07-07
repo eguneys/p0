@@ -5,6 +5,7 @@
 #include "soko/board.h"
 #include "soko/position.h"
 #include "neural/encoder.h"
+#include "neural/writer.h"
 #include "utils/mutex.h"
 
 namespace pzero {

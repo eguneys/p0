@@ -56,6 +56,17 @@ deps += [
      cc.find_library('pthread'),
      ]
 
+###############
+## Dependencies
+###############
+
+## ~~~
+## zlib
+## ~~~
+## https://wrapdb.mesonbuild.com/zlib
+## subprojects/zlib.wrap
+deps += dependency('zlib', fallback: ['zlib', 'zlib_dep'])
+
 executable('p0', 'src/main.cc',
                  files, include_directories: includes, dependencies: deps, install: true)
 
