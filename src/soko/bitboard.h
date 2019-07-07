@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "utils/bitset_iter.h"
-
 namespace pzero {
 
   class BoardSquare {
